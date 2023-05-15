@@ -27,6 +27,6 @@
 		"svelte-loading-spinners": "^0.3.4",
 		"svelte-select": "^5.5.2",
 		"svelte-seo": "^1.5.3",
-		"dotenv"
+		"dotenv": "^10.0.0"
 	}
 }
