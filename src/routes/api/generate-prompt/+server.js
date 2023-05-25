@@ -1,11 +1,19 @@
-import { MIDJOURNEY_EXPLANATION_SHORT } from "$lib/constants";
-import { PROMPT_FILLER_EXPLANATION } from "$lib/constants.js";
+import { MIDJOURNEY_EXPLANATION_SHORT} from "$lib/constants";
+import {PROMPT_FILLER_EXPLANATION} from "$lib/constants.js";
+import { ChatGPTBrowserClient } from '@waylaidwanderer/chatgpt-api';
 import { error, json } from '@sveltejs/kit';
-import { env } from 'process';
 
 
 export async function POST({ request, fetch }) {
     const { prompt_text, api_key, num_replies = 1 } = await request.json();
+    const accessToken = (api_key === "1") ? `${env.KEY}` : api_key;
+    const clientOptions = {
+    reverseProxyUrl: `${env.ENDPOINT}`,
+    accessToken: accessToken,
+
+};
+const chatGptClient = new ChatGPTBrowserClient(clientOptions);
+
 
     if (!prompt_text || !api_key) {
         throw error(400, "Invalid request. Please provide prompt_text, personality_key, and api_key.");
@@ -17,34 +25,14 @@ export async function POST({ request, fetch }) {
 input: 一只猫
 a cat
 now, let's begin: ${prompt_text}`;
-        const tresponse = await fetch(`${env.ENDPOINT}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                message: pretmessages,
-                stop: null,
-                temperature: 1.0
-            })
-        });
-        const tresponseData = await tresponse.json();
+        const tresponse = await chatGptClient.sendMessage( pretmessages );
+        const tresponseData = tresponse;
         //console.log(tresponseData);
         console.log(tresponseData.response);  
         const stringMessages = `${MIDJOURNEY_EXPLANATION_SHORT}\n${PROMPT_FILLER_EXPLANATION}\nGive me ${num_replies} examples of:` + tresponseData.response;
         //console.log(stringMessages);
-        const response = await fetch(`${env.ENDPOINT}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                message: stringMessages,
-                stop: null,
-                temperature: 1.0
-            })
-        });
-        const responseData = await response.json();
+        const response = await chatGptClient.sendMessage( stringMessages);
+        const responseData = response;
         console.log(responseData);
         if (responseData.error) {
             throw new Error(responseData.error.message)
