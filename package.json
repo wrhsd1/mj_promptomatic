@@ -22,6 +22,7 @@
 	"type": "module",
 	"dependencies": {
 		"@iconify/svelte": "^3.1.0",
+		"@waylaidwanderer/chatgpt-api": "^1.36.2",
 		"openai": "^3.2.1",
 		"svelte-icons": "^2.1.0",
 		"svelte-loading-spinners": "^0.3.4",
