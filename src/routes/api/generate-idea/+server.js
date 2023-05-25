@@ -1,6 +1,8 @@
 import { IDEA_GENERATOR_EXPLANATION,  } from "$lib/constants";
 import { error, json } from '@sveltejs/kit';
 import { ChatGPTBrowserClient } from '@waylaidwanderer/chatgpt-api';
+import { env } from 'process';
+
 import {
   IDEA_GENERATOR_PHOTOGRAPHER,
   IDEA_GENERATOR_PAINTER,
